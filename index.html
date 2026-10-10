@@ -1,0 +1,875 @@
+<title>Torn Net Worth</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500;600&display=swap">
+<style>
+/* Layout: a single statement column — ledger rules, no cards, figures carrying the hierarchy. */
+:root{
+  --bg:#eef0ed; --surface:#fbfcfa; --fg:#141c19; --muted:#5d6d66; --faint:#86948d;
+  --line:#d6dbd5; --rule:#c3cabf;
+  --accent:#0d5b48; --accent-soft:#0d5b4818;
+  --warn:#8a5712; --crit:#8d3025;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1311; --surface:#141d19; --fg:#e4ebe7; --muted:#90a49b; --faint:#6d8178;
+  --line:#22302a; --rule:#2d3d36;
+  --accent:#54c2a0; --accent-soft:#54c2a01f;
+  --warn:#d0a055; --crit:#e0776a;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1311; --surface:#141d19; --fg:#e4ebe7; --muted:#90a49b; --faint:#6d8178;
+  --line:#22302a; --rule:#2d3d36;
+  --accent:#54c2a0; --accent-soft:#54c2a01f;
+  --warn:#d0a055; --crit:#e0776a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;
+  padding-inline:20px;padding-block:28px 56px;margin:0}
+.wrap{max-width:820px;margin:0 auto}
+h1{font-family:var(--serif);font-size:1.6rem;font-weight:600;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.lede{color:var(--muted);font-size:.9rem;margin:6px 0 0;max-width:64ch}
+.eyebrow{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+  font-weight:600;margin:0 0 10px}
+
+.keybar{margin:26px 0 0;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.keyrow{display:flex;gap:8px;flex-wrap:wrap}
+.keyrow label{flex:1 1 220px;min-width:0;display:block}
+input[type=text]{width:100%;min-width:0;font-family:var(--mono);font-size:.92rem;padding:10px 12px;
+  background:var(--bg);color:var(--fg);border:1px solid var(--rule);border-radius:7px}
+input[type=text]:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+button{font-family:var(--sans);font-size:.9rem;font-weight:600;padding:10px 20px;cursor:pointer;
+  background:var(--accent);color:var(--surface);border:1px solid var(--accent);border-radius:7px}
+button:hover:not(:disabled){filter:brightness(1.08)}
+button:disabled{opacity:.5;cursor:default}
+button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+button.ghost{background:transparent;color:var(--muted);border-color:var(--rule);font-weight:500}
+.keynote{font-size:.78rem;color:var(--muted);margin:10px 0 0}
+.keynote b{color:var(--fg);font-weight:600}
+.status{font-size:.82rem;margin:10px 0 0;min-height:1.2em;color:var(--muted)}
+.status.err{color:var(--crit)}
+
+.demo{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:30px 0 0;padding:9px 13px;
+  border-left:3px solid var(--warn);background:var(--accent-soft);border-radius:0 7px 7px 0;font-size:.82rem}
+.demo b{color:var(--warn)}
+
+.total{margin:34px 0 0;padding-bottom:22px;border-bottom:2px solid var(--rule)}
+.total .who{font-size:.85rem;color:var(--muted);margin:0 0 4px}
+.total .fig{font-family:var(--serif);font-size:clamp(2.6rem,11vw,4rem);font-weight:600;line-height:1;
+  letter-spacing:-.025em;font-variant-numeric:tabular-nums;margin:0}
+.total .exact{font-family:var(--mono);font-size:.84rem;color:var(--muted);margin:8px 0 0;
+  font-variant-numeric:tabular-nums}
+
+section{margin:40px 0 0}
+h2{font-family:var(--serif);font-size:1.1rem;font-weight:600;margin:0 0 3px}
+.sub{color:var(--muted);font-size:.84rem;margin:0 0 16px;max-width:64ch}
+h3{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  font-weight:600;margin:22px 0 6px}
+
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:1fr auto auto;gap:5px 14px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .nm{font-size:.9rem;min-width:0}
+.row .nm small{display:block;color:var(--faint);font-size:.76rem}
+.row .vl{font-family:var(--mono);font-size:.88rem;font-variant-numeric:tabular-nums;text-align:right;
+  white-space:nowrap}
+.row .pc{font-family:var(--mono);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;
+  text-align:right;min-width:4.4em;white-space:nowrap}
+.row .bar{grid-column:1/-1;height:3px;background:var(--line);border-radius:2px;overflow:hidden}
+.row .bar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.row.neg .vl{color:var(--crit)}
+.row.good .vl{color:var(--accent)}
+.row.tot{border-top:2px solid var(--rule);border-bottom:0;margin-top:4px;padding-top:11px;font-weight:600}
+
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:13px}
+.tier{min-width:0;padding:14px;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+.tier .t{font-size:.69rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.tier .v{font-family:var(--serif);font-size:1.45rem;font-weight:600;margin:6px 0 2px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.015em}
+.tier .d{font-size:.77rem;color:var(--muted)}
+.tier.cash .v{color:var(--accent)}
+.tier.bad .v{color:var(--crit)}
+
+.note{margin:16px 0 0;padding:11px 14px;border-left:3px solid var(--accent);background:var(--accent-soft);
+  border-radius:0 7px 7px 0;font-size:.86rem}
+.note.warn{border-left-color:var(--warn)}
+.note.off{border-left-color:var(--rule);background:transparent;color:var(--muted)}
+.note b{font-weight:600}
+
+.chartwrap{overflow-x:auto;margin:4px 0 0}
+svg.chart{display:block;width:100%;min-width:320px;max-width:100%;height:auto}
+
+footer{margin:54px 0 0;padding-top:18px;border-top:1px solid var(--line);
+  font-size:.77rem;color:var(--faint)}
+footer code{font-family:var(--mono);font-size:.92em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Torn City · account statement</p>
+  <h1>Where your money actually is</h1>
+  <p class="lede">Paste an API key for a full financial picture: net worth by bucket, how it got there over your account's lifetime, everything you have bought and sold, what your stocks have paid you in goods, and what your property costs you to sit on.</p>
+
+  <div class="keybar">
+    <form class="keyrow" id="f">
+      <label>
+        <input type="text" id="key" placeholder="API key" autocomplete="off" spellcheck="false" aria-label="Torn API key">
+      </label>
+      <button type="submit" id="go">Load</button>
+      <button type="button" class="ghost" id="demo">Sample</button>
+    </form>
+    <p class="keynote">A <b>limited</b> key is enough — everything here works on one. Nothing on this page needs full access, so don't give it one.</p>
+    <p class="status" id="st" role="status"></p>
+  </div>
+
+  <div class="demo" id="demobar"><b>Sample account.</b> <span>Made-up figures. Enter a key above for your own.</span></div>
+
+  <div class="total">
+    <p class="who" id="who">Sample Player [0000000] · Level 100</p>
+    <p class="fig" id="fig">$12.42bn</p>
+    <p class="exact" id="exact">$12,418,660,000</p>
+  </div>
+
+  <section>
+    <h2>Where it sits today</h2>
+    <p class="sub">Every bucket Torn tracks, largest first. Loans and unpaid fees are subtracted from the total.</p>
+    <div class="rows" id="buckets"></div>
+    <div id="conc"></div>
+  </section>
+
+  <section>
+    <h2>How much you could actually spend</h2>
+    <p class="sub">Torn's total treats a stock portfolio the same as the cash in your wallet. They do not behave the same way.</p>
+    <div class="tiers" id="tiers"></div>
+    <div id="banknote"></div>
+  </section>
+
+  <section>
+    <h2>Net worth over your account's lifetime</h2>
+    <p class="sub">Torn keeps dated snapshots of your net worth. This reads one per point, so it takes a few seconds.</p>
+    <button type="button" class="ghost" id="histGo">Load lifetime history</button>
+    <p class="status" id="histst" role="status"></p>
+    <div class="chartwrap" id="chartwrap"></div>
+    <div class="rows" id="histrows"></div>
+    <div id="histnote"></div>
+  </section>
+
+  <section>
+    <h2>Bought and sold</h2>
+    <p class="sub">Lifetime trading totals Torn keeps itself. No log trawling needed for these.</p>
+    <h3>Selling</h3>
+    <div class="rows" id="selling"></div>
+    <h3>Buying</h3>
+    <div class="rows" id="buying"></div>
+    <h3>Points</h3>
+    <div class="rows" id="pointsrows"></div>
+  </section>
+
+  <section>
+    <h2>Investments</h2>
+    <p class="sub">What the bank and the stock market have returned, separately from what they currently hold.</p>
+    <div class="tiers" id="invtiers"></div>
+    <div class="rows" id="invrows"></div>
+  </section>
+
+  <section>
+    <h2>Stock benefit payouts</h2>
+    <p class="sub">What your holdings have handed you, item by item, valued at today's market price. Reads your full payout log, so it takes a moment.</p>
+    <button type="button" class="ghost" id="payGo">Load payout history</button>
+    <p class="status" id="payst" role="status"></p>
+    <div class="tiers" id="paytiers" hidden></div>
+    <div class="rows" id="payrows"></div>
+    <div id="paynote"></div>
+  </section>
+
+  <section>
+    <h2>Crime earnings per crime</h2>
+    <p class="sub">Every Crimes 2.0 success you have logged, grouped by crime, counting cash and goods. Nerve is the real constraint, so the right-hand figure is what each crime returns per point of nerve.</p>
+    <button type="button" class="ghost" id="crimeGo">Load crime history</button>
+    <p class="status" id="crimest" role="status"></p>
+    <div class="tiers" id="crimetiers" hidden></div>
+    <div class="rows" id="crimerows"></div>
+    <div id="crimenote"></div>
+  </section>
+
+  <section>
+    <h2>Faction organised crimes</h2>
+    <p class="sub">Your share of every OC payout, grouped by scenario. Torn logs the percentage you were paid, so the full pot is recoverable without guessing the team size.</p>
+    <button type="button" class="ghost" id="ocGo">Load OC payouts</button>
+    <p class="status" id="ocst" role="status"></p>
+    <div class="tiers" id="octiers" hidden></div>
+    <div class="rows" id="ocrows"></div>
+    <div id="ocnote"></div>
+  </section>
+
+  <section>
+    <h2>Property drag</h2>
+    <p class="sub">Properties count as assets. Idle ones also bill you every day.</p>
+    <div class="rows" id="props"></div>
+    <div id="propnote"></div>
+  </section>
+
+  <section>
+    <h2>Consumption and finds</h2>
+    <p class="sub">What you have put into the account rather than taken out of it.</p>
+    <div class="rows" id="misc"></div>
+  </section>
+
+  <footer>
+    <p>Reads <code>v2/user/personalstats?cat=all</code>, <code>user/?selections=profile,properties</code>, and on request <code>v2/user/personalstats?stat=networth&amp;timestamp=</code> plus the stock payout logs — all from your browser. The key is held in memory for the session, never written to storage, never sent to any host but Torn. Faction vault balance needs faction-side API permission and is usually not readable even on a full key, so it is not shown.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var fmt=function(n){return '$'+Math.round(n).toLocaleString('en-US')};
+  var num=function(n){return Math.round(n).toLocaleString('en-US')};
+  var abbr=function(n){
+    var a=Math.abs(n), s=n<0?'-$':'$';
+    if(a>=1e9) return s+(a/1e9).toFixed(2)+'bn';
+    if(a>=1e6) return s+(a/1e6).toFixed(1)+'m';
+    if(a>=1e3) return s+(a/1e3).toFixed(0)+'k';
+    return s+a.toFixed(0);
+  };
+  var LASTKEY='', SIGNUP=null;
+
+  var NWLABELS=[['wallet','Wallet'],['bank','Bank (invested)'],['overseas_bank','Overseas bank'],
+    ['vaults','Vaults'],['piggy_bank','Piggy bank'],['points','Points'],['inventory','Item inventory'],
+    ['display_case','Display case'],['bazaar','Bazaar stock'],['item_market','Item market listings'],
+    ['property','Properties'],['stock_market','Stock market'],['auction_house','Auction house'],
+    ['company','Company'],['bookie','Bookie'],['enlisted_cars','Enlisted cars'],['pending','Pending'],
+    ['loans','Loans'],['unpaid_fees','Unpaid fees']];
+  var NEG={loans:1,unpaid_fees:1};
+  var CASH={wallet:1,overseas_bank:1,piggy_bank:1,vaults:1};
+
+  var SAMPLE={
+    ps:{networth:{total:12418660000,wallet:4210000,bank:1800000000,overseas_bank:250000000,vaults:0,
+        piggy_bank:0,points:61000000,inventory:980000000,display_case:12000000,bazaar:34000000,
+        item_market:0,property:430000000,stock_market:8800000000,auction_house:0,company:0,bookie:0,
+        enlisted_cars:1450000,pending:0,loans:0,unpaid_fees:0},
+      trading:{items:{bought:{market:2300,shops:11400},auctions:{won:4,sold:1},sent:88},trades:63,
+        points:{bought:12400,sold:7100},
+        bazaar:{customers:410,sales:9800,profit:4120000000},
+        item_market:{customers:84,sales:1840,revenue:620000000,fees:27900000}},
+      investments:{bank:{total:24000000000,profit:2600000000,current:1800000000,time_remaining:1123200},
+        stocks:{profits:210000000,losses:44000000,fees:9100000,net_profits:166000000,payouts:640}},
+      items:{found:{city:520,dump:40,easter_eggs:6},trashed:1200,
+        used:{books:4,boosters:12,consumables:2900,candy:800,alcohol:900,energy_drinks:1100,stat_enhancers:0}},
+      other:{awards:220,merits_bought:18,refills:{energy:640,nerve:120},donator_days:900}},
+    profile:{name:'Sample Player',player_id:'0000000',level:100,signup:'2014-03-02 10:00:00'},
+    properties:{a:{status:'Owned by them',upkeep:9000,rented:null,property:'Private Island'},
+      b:{status:'Owned by them',upkeep:9000,rented:null,property:'Private Island'},
+      c:{status:'Owned by them',upkeep:2500,rented:{},property:'Castle'},
+      d:{status:'Owned by them',upkeep:200,rented:null,property:'Beach House'}}
+  };
+
+  function rowEl(name,val,pct,cls,bar,sub){
+    var r=document.createElement('div');
+    r.className='row'+(cls?' '+cls:'');
+    var n=document.createElement('div'); n.className='nm'; n.textContent=name;
+    if(sub){ var s=document.createElement('small'); s.textContent=sub; n.appendChild(s); }
+    var v=document.createElement('div'); v.className='vl'; v.textContent=val;
+    var p=document.createElement('div'); p.className='pc'; p.textContent=pct||'';
+    r.appendChild(n); r.appendChild(v); r.appendChild(p);
+    if(bar!=null){
+      var b=document.createElement('div'); b.className='bar';
+      var i=document.createElement('i'); i.style.width=Math.max(bar,0.4)+'%';
+      b.appendChild(i); r.appendChild(b);
+    }
+    return r;
+  }
+  function fill(el,list){ el.textContent=''; list.forEach(function(x){ el.appendChild(rowEl.apply(null,x)) }); }
+  function tiles(el,list){
+    el.textContent=''; el.hidden=false;
+    list.forEach(function(x){
+      var d=document.createElement('div'); d.className='tier '+(x[3]||'');
+      var a=document.createElement('div'); a.className='t'; a.textContent=x[0];
+      var b=document.createElement('div'); b.className='v'; b.textContent=x[1];
+      var c=document.createElement('div'); c.className='d'; c.textContent=x[2];
+      d.appendChild(a); d.appendChild(b); d.appendChild(c); el.appendChild(d);
+    });
+  }
+  function note(el,cls,html){ el.textContent=''; var n=document.createElement('div');
+    n.className='note'+(cls?' '+cls:''); n.innerHTML=html; el.appendChild(n); }
+
+  function render(d){
+    var ps=d.ps||{}, pf=d.profile||{}, pr=d.properties||{};
+    var nw=ps.networth||{}, tr=ps.trading||{}, inv=ps.investments||{}, it=ps.items||{}, ot=ps.other||{};
+    var total=nw.total||0;
+
+    $('who').textContent=(pf.name||'Account')+' ['+(pf.player_id||'')+']'+
+      (pf.level?' · Level '+pf.level:'')+(pf.signup?' · joined '+pf.signup.slice(0,10):'');
+    $('fig').textContent=abbr(total);
+    $('exact').textContent=fmt(total);
+
+    // --- buckets
+    var box=$('buckets'); box.textContent='';
+    var ks=NWLABELS.filter(function(p){return (nw[p[0]]||0)!==0});
+    ks.sort(function(a,b){return Math.abs(nw[b[0]])-Math.abs(nw[a[0]])});
+    var max=ks.length?Math.abs(nw[ks[0][0]]):1;
+    ks.forEach(function(p){
+      var v=nw[p[0]], neg=!!NEG[p[0]];
+      box.appendChild(rowEl(p[1],(neg?'-':'')+fmt(Math.abs(v)),
+        total?(Math.abs(v)/total*100).toFixed(1)+'%':'',neg?'neg':'',Math.abs(v)/max*100));
+    });
+    var t=rowEl('Total net worth',fmt(total),'','tot',null); box.appendChild(t);
+
+    var top=ks.filter(function(p){return !NEG[p[0]]})[0];
+    if(top&&total){
+      var share=nw[top[0]]/total*100;
+      note($('conc'),share>=60?'warn':'',
+        share>=60
+          ? '<b>'+share.toFixed(0)+'% of everything you own sits in one bucket: '+top[1].toLowerCase()+'.</b> '+
+            'That is fine until it is not — one market shift moves your whole position at once.'
+          : '<b>Largest bucket is '+top[1].toLowerCase()+', at '+share.toFixed(0)+'%.</b> '+
+            'Reasonably spread by Torn standards.');
+    } else { $('conc').textContent=''; }
+
+    // --- tiers
+    var cash=0; Object.keys(CASH).forEach(function(k){cash+=nw[k]||0});
+    var locked=nw.bank||0, assets=total-cash-locked;
+    tiles($('tiers'),[
+      ['Spendable now',abbr(cash),(total?(cash/total*100).toFixed(1)+'% · ':'')+'Wallet, overseas, vaults','cash'],
+      ['Locked in the bank',abbr(locked),(total?(locked/total*100).toFixed(1)+'% · ':'')+'Released at maturity',''],
+      ['Assets to sell first',abbr(assets),(total?(assets/total*100).toFixed(1)+'% · ':'')+'Stock, items, property','']
+    ]);
+    var bk=inv.bank||{};
+    if(bk.time_remaining>0){
+      var dd=Math.floor(bk.time_remaining/86400), hh=Math.floor((bk.time_remaining%86400)/3600);
+      note($('banknote'),'','<b>'+fmt(bk.current||locked)+' matures in '+dd+' days '+hh+' hours.</b> '+
+        'Until then it counts toward net worth but cannot be touched.');
+    } else { $('banknote').textContent=''; }
+
+    // --- bought and sold
+    var bz=tr.bazaar||{}, im=tr.item_market||{}, ti=tr.items||{}, au=(ti.auctions||{}), pt=tr.points||{};
+    fill($('selling'),[
+      ['Bazaar profit',fmt(bz.profit||0),'','good',null,num(bz.sales||0)+' sales to '+num(bz.customers||0)+' customers'],
+      ['Item market revenue',fmt(im.revenue||0),'','',null,num(im.sales||0)+' sales to '+num(im.customers||0)+' customers'],
+      ['Item market fees',fmt(im.fees||0),'','neg',null,'Deducted from that revenue'],
+      ['Item market, net of fees',fmt((im.revenue||0)-(im.fees||0)),'','good',null,''],
+      ['Auction house sales',num(au.sold||0),'','',null,''],
+      ['Items trashed',num(it.trashed||0),'','',null,'Dumped rather than sold']
+    ]);
+    fill($('buying'),[
+      ['Bought on the item market',num(ti.bought&&ti.bought.market||0),'','',null,''],
+      ['Bought from city shops',num(ti.bought&&ti.bought.shops||0),'','',null,''],
+      ['Bought abroad',num(ti.bought&&ti.bought.abroad||0),'','',null,'Travel buying'],
+      ['Auctions won',num(au.won||0),'','',null,''],
+      ['Trades completed',num(tr.trades||0),'','',null,''],
+      ['Items sent to others',num(ti.sent||0),'','',null,''],
+      ['Items found in the city',num(it.found&&it.found.city||0),'','',null,'']
+    ]);
+    fill($('pointsrows'),[
+      ['Points bought',num(pt.bought||0),'','',null,''],
+      ['Points sold',num(pt.sold||0),'','',null,''],
+      ['Net points taken off the market',num((pt.bought||0)-(pt.sold||0)),'','',null,''],
+      ['Points held now',fmt(nw.points||0),'','',null,'At current market value']
+    ]);
+
+    // --- investments
+    var st=inv.stocks||{};
+    tiles($('invtiers'),[
+      ['Bank interest earned',abbr(bk.profit||0),num(Math.round((bk.total||0)/1e9))+'bn cycled through','cash'],
+      ['Stock trading, net',abbr(st.net_profits||0),num(st.payouts||0)+' benefit payouts',
+        (st.net_profits||0)<0?'bad':'cash'],
+      ['Currently invested',abbr((bk.current||0)+(nw.stock_market||0)),'Bank plus stock market','']
+    ]);
+    fill($('invrows'),[
+      ['Money cycled through the bank',fmt(bk.total||0),'','',null,'Principal, not interest'],
+      ['Bank interest earned',fmt(bk.profit||0),'','good',null,''],
+      ['Stock gains realised',fmt(st.profits||0),'','good',null,''],
+      ['Stock losses realised',fmt(st.losses||0),'','neg',null,''],
+      ['Stock trading fees',fmt(st.fees||0),'','neg',null,''],
+      ['Stock trading, net of all costs',fmt(st.net_profits||0),'',(st.net_profits||0)<0?'neg':'good',null,''],
+      ['Stock benefit payouts received',num(st.payouts||0),'','',null,'Counted below, in goods and cash']
+    ]);
+
+    // --- properties
+    var list=Object.keys(pr).map(function(k){return pr[k]})
+      .filter(function(p){return p.status==='Owned by them'});
+    var rented=list.filter(function(p){return p.rented}).length;
+    var idle=list.filter(function(p){return !p.rented});
+    var upDay=list.reduce(function(s,p){return s+(p.upkeep||0)},0);
+    var idleDay=idle.reduce(function(s,p){return s+(p.upkeep||0)},0);
+    fill($('props'),[
+      ['Properties owned',num(list.length),'','',null,''],
+      ['Currently rented out',num(rented),'','',null,''],
+      ['Sitting idle',num(idle.length),'','',null,'One of these is your residence'],
+      ['Upkeep per day',fmt(upDay),'','',null,''],
+      ['Upkeep per year',fmt(upDay*365),'','neg',null,''],
+      ['Idle upkeep per year',fmt(idleDay*365),'','neg',null,'Paid for properties doing nothing']
+    ]);
+    if(idle.length>1){
+      note($('propnote'),'warn','<b>'+idle.length+' properties cost you '+fmt(idleDay*365)+
+        ' a year to do nothing.</b> Listing them on the rental market turns that line from a cost into income.');
+    } else { note($('propnote'),'off','Little idle property drag here.'); }
+
+    // --- misc
+    var us=it.used||{}, fo=it.found||{}, rf=ot.refills||{};
+    fill($('misc'),[
+      ['Consumables used',num(us.consumables||0),'','',null,''],
+      ['Candy used',num(us.candy||0),'','',null,''],
+      ['Alcohol used',num(us.alcohol||0),'','',null,''],
+      ['Energy drinks used',num(us.energy_drinks||0),'','',null,''],
+      ['Boosters used',num(us.boosters||0),'','',null,''],
+      ['Books used',num(us.books||0),'','',null,''],
+      ['Energy refills bought',num(rf.energy||0),'','',null,''],
+      ['Nerve refills bought',num(rf.nerve||0),'','',null,''],
+      ['Merits bought',num(ot.merits_bought||0),'','',null,''],
+      ['Awards',num(ot.awards||0),'','',null,''],
+      ['Donator days',num(ot.donator_days||0),'','',null,''],
+      ['Items found in the dump',num(fo.dump||0),'','',null,'']
+    ]);
+  }
+
+  // ---------- networking ----------
+  function getJSON(u){
+    return fetch(u).then(function(r){return r.json()}).then(function(d){
+      if(d && d.error) throw new Error(d.error.error); return d; });
+  }
+  function setStatus(el,msg,cls){ var s=$(el); s.textContent=msg||''; s.className='status'+(cls?' '+cls:''); }
+
+  function load(key){
+    setStatus('st','Loading…'); $('go').disabled=true;
+    Promise.all([
+      getJSON('https://api.torn.com/v2/user/personalstats?cat=all&key='+encodeURIComponent(key)),
+      getJSON('https://api.torn.com/user/?selections=profile,properties&key='+encodeURIComponent(key))
+    ]).then(function(r){
+      LASTKEY=key;
+      SIGNUP=r[1].signup||null;
+      $('demobar').hidden=true;
+      render({ps:r[0].personalstats||{},profile:r[1],properties:r[1].properties||{}});
+      setStatus('st','Loaded '+new Date().toLocaleTimeString()+'.');
+    }).catch(function(e){
+      setStatus('st','Could not load: '+(e&&e.message?e.message:'request failed')+
+        '. If this page is inside an app frame rather than a browser tab, the request is blocked there.','err');
+    }).then(function(){ $('go').disabled=false; });
+  }
+
+  // ---------- lifetime net worth ----------
+  function buildPoints(signup){
+    var now=Math.floor(Date.now()/1000);
+    var start=signup?Math.floor(new Date(signup.replace(' ','T')+'Z').getTime()/1000):now-5*31536000;
+    var pts=[], d=new Date();
+    for(var i=0;i<24;i++){ // monthly, last 2 years
+      var x=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()-i,1));
+      pts.push(Math.floor(x.getTime()/1000));
+    }
+    var y0=new Date(start*1000).getUTCFullYear(), yN=new Date().getUTCFullYear()-2;
+    for(var y=y0;y<=yN;y++){ pts.push(Math.floor(Date.UTC(y,0,1)/1000)); }
+    pts=pts.filter(function(p){return p>=start && p<=now});
+    pts.sort(function(a,b){return a-b});
+    return pts;
+  }
+
+  function drawChart(series){
+    var W=760,H=280,L=68,R=18,T=18,B=34;
+    var xs=series.map(function(p){return p.t}), ys=series.map(function(p){return p.v});
+    var x0=Math.min.apply(null,xs), x1=Math.max.apply(null,xs);
+    var y1=Math.max.apply(null,ys)*1.08, y0=0;
+    var X=function(t){return L+(x1===x0?0:(t-x0)/(x1-x0))*(W-L-R)};
+    var Y=function(v){return H-B-(y1===y0?0:(v-y0)/(y1-y0))*(H-T-B)};
+    var ns='http://www.w3.org/2000/svg';
+    var svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.setAttribute('class','chart');
+    svg.setAttribute('role','img');
+    svg.setAttribute('aria-label','Net worth over time, ending at '+abbr(ys[ys.length-1]));
+    function el(n,a){ var e=document.createElementNS(ns,n);
+      Object.keys(a).forEach(function(k){e.setAttribute(k,a[k])}); return e; }
+    function txt(x,y,s,anchor,size,fill){
+      var e=el('text',{x:x,y:y,'text-anchor':anchor||'start','font-size':size||11,
+        fill:fill||'var(--muted)','font-family':'var(--mono)'});
+      e.textContent=s; return e;
+    }
+    // y gridlines + labels
+    for(var i=0;i<=4;i++){
+      var v=y0+(y1-y0)*i/4, y=Y(v);
+      svg.appendChild(el('line',{x1:L,x2:W-R,y1:y,y2:y,stroke:'var(--line)','stroke-width':1}));
+      svg.appendChild(txt(L-8,y+4,abbr(v),'end',11));
+    }
+    // x labels: one per year present
+    var seen={};
+    series.forEach(function(p){
+      var yr=new Date(p.t*1000).getUTCFullYear();
+      if(seen[yr]) return; seen[yr]=1;
+      svg.appendChild(txt(X(p.t),H-12,String(yr),'middle',11));
+    });
+    // area + line
+    var dA='M'+X(series[0].t)+' '+Y(0);
+    series.forEach(function(p){ dA+='L'+X(p.t)+' '+Y(p.v) });
+    dA+='L'+X(series[series.length-1].t)+' '+Y(0)+'Z';
+    svg.appendChild(el('path',{d:dA,fill:'var(--accent)','fill-opacity':.12,stroke:'none'}));
+    var dL='M'+series.map(function(p){return X(p.t)+' '+Y(p.v)}).join('L');
+    svg.appendChild(el('path',{d:dL,fill:'none',stroke:'var(--accent)','stroke-width':2,
+      'stroke-linejoin':'round','stroke-linecap':'round'}));
+    // endpoint
+    var last=series[series.length-1];
+    svg.appendChild(el('circle',{cx:X(last.t),cy:Y(last.v),r:4,fill:'var(--accent)'}));
+    var lbl=txt(X(last.t)-8,Y(last.v)-10,abbr(last.v),'end',12,'var(--fg)');
+    lbl.setAttribute('font-weight','600');
+    svg.appendChild(lbl);
+    var wrap=$('chartwrap'); wrap.textContent=''; wrap.appendChild(svg);
+  }
+
+  function loadHistory(key,signup){
+    $('histGo').disabled=true;
+    var pts=buildPoints(signup), got=[], i=0;
+    setStatus('histst','Reading snapshots… 0 of '+pts.length);
+    function step(){
+      if(i>=pts.length){ finish(); return; }
+      var ts=pts[i++];
+      getJSON('https://api.torn.com/v2/user/personalstats?stat=networth&timestamp='+ts+
+        '&key='+encodeURIComponent(key))
+      .then(function(d){
+        var a=(d.personalstats||[])[0];
+        if(a && typeof a.value==='number') got.push({t:a.timestamp||ts,v:a.value});
+      })
+      .catch(function(){ /* a missing snapshot is normal; keep going */ })
+      .then(function(){
+        setStatus('histst','Reading snapshots… '+i+' of '+pts.length);
+        setTimeout(step,120);
+      });
+    }
+    function finish(){
+      $('histGo').disabled=false;
+      // dedupe on the timestamp Torn actually returned, not the one requested
+      var seen={}, s=[];
+      got.sort(function(a,b){return a.t-b.t});
+      got.forEach(function(p){ if(!seen[p.t]){ seen[p.t]=1; s.push(p) } });
+      if(s.length<2){ setStatus('histst','Torn returned too few snapshots to plot.','err'); return; }
+      drawChart(s);
+      var first=s[0], last=s[s.length-1];
+      var yrs=(last.t-first.t)/31536000;
+      var mult=first.v>0?last.v/first.v:0;
+      fill($('histrows'),[
+        ['Earliest snapshot',fmt(first.v),'','',null,new Date(first.t*1000).toISOString().slice(0,10)],
+        ['Latest snapshot',fmt(last.v),'','',null,new Date(last.t*1000).toISOString().slice(0,10)],
+        ['Change over that span',fmt(last.v-first.v),'',(last.v-first.v)<0?'neg':'good',null,
+          yrs.toFixed(1)+' years'],
+        ['Average per year',fmt(yrs>0?(last.v-first.v)/yrs:0),'','',null,''],
+        ['Snapshots plotted',num(s.length),'','',null,'']
+      ]);
+      note($('histnote'),'','<b>'+(mult>=1?mult.toFixed(1)+'× growth':'down '+((1-mult)*100).toFixed(0)+'%')+
+        ' across '+yrs.toFixed(1)+' years.</b> Points are plotted at the dates Torn actually returned, '+
+        'which snap to its own snapshot schedule rather than the dates requested.');
+      setStatus('histst','Plotted '+s.length+' snapshots.');
+    }
+    step();
+  }
+
+  // ---------- stock benefit payouts ----------
+  // Torn allows 100 requests a minute; pages are spaced so a long pull never trips it.
+  var PAGE_GAP=700;
+  function wait(ms){ return new Promise(function(r){ setTimeout(r,ms) }); }
+
+  function pullLog(key,type,onPage){
+    var out=[];
+    function page(to){
+      var u='https://api.torn.com/user/?selections=log&log='+type+'&key='+encodeURIComponent(key)+
+        (to?'&to='+to:'');
+      return getJSON(u).then(function(d){
+        var log=d.log||{}, rows=Object.keys(log).map(function(k){return log[k]});
+        if(!rows.length) return out;
+        out=out.concat(rows);
+        if(onPage) onPage(out.length);
+        if(rows.length<100) return out;
+        var min=Math.min.apply(null,rows.map(function(r){return r.timestamp}));
+        return wait(PAGE_GAP).then(function(){ return page(min-1) });
+      });
+    }
+    return page(0);
+  }
+
+  // Shared item/stock catalogue — fetched once, reused by payouts and crimes.
+  var REF=null;
+  function refData(key){
+    if(REF) return Promise.resolve(REF);
+    return getJSON('https://api.torn.com/torn/?selections=items,stocks&key='+encodeURIComponent(key))
+      .then(function(d){ REF={items:d.items||{},stocks:d.stocks||{}}; return REF; });
+  }
+
+  // Crimes 2.0 logs name the action, not the crime. These verb families were read off real logs.
+  var CRIME_VERBS=[
+    ['searching','Search for Cash'],['pickpocketing','Pickpocketing'],['cracking','Cracking'],
+    ['shoplifting','Shoplifting'],['burgling','Burglary'],['spraying','Graffiti'],
+    ['responding','Scamming'],['winning','Hustling'],
+    ['burning','Disposal'],['abandoning','Disposal'],['sinking','Disposal'],
+    ['burying','Disposal'],['dissolving','Disposal'],
+    ['laminating','Forgery'],['signing','Forgery'],
+    ['perforating','Card Skimming'],['drilling','Card Skimming'],['casing','Card Skimming'],
+    ['bootlegging','Bootlegging'],['copying','Bootlegging']
+  ];
+  function crimeOf(action){
+    var a=(action||'').toLowerCase().trim();
+    if(a.indexOf('collecting the reward')===0) return 'Arson';
+    if(a.indexOf('collecting from')===0) return 'Hustling';
+    var v=a.split(' ')[0];
+    for(var i=0;i<CRIME_VERBS.length;i++){ if(CRIME_VERBS[i][0]===v) return CRIME_VERBS[i][1]; }
+    return null; // shown under its own phrase rather than guessed at
+  }
+
+  function loadCrimes(key){
+    $('crimeGo').disabled=true;
+    setStatus('crimest','Fetching the item catalogue…');
+    var ITEMS={};
+    refData(key).then(function(ref){
+      ITEMS=ref.items;
+      setStatus('crimest','Reading cash crimes…');
+      return pullLog(key,9015,function(n){ setStatus('crimest','Reading cash crimes… '+n) });
+    }).then(function(cash){
+      setStatus('crimest','Reading item crimes…');
+      return pullLog(key,9020,function(n){ setStatus('crimest','Reading item crimes… '+n) })
+        .then(function(items){ return [cash,items] });
+    }).then(function(r){
+      setStatus('crimest','Reading point crimes…');
+      return pullLog(key,9025).then(function(pts){ return [r[0],r[1],pts] });
+    }).then(function(r){
+      var cash=r[0], itemRows=r[1], ptRows=r[2];
+      var agg={}, unmapped=0;
+      function bucket(name){
+        if(!agg[name]) agg[name]={runs:0,nerve:0,money:0,goods:0,points:0};
+        return agg[name];
+      }
+      function nameFor(d){
+        var c=crimeOf(d.crime_action);
+        if(c) return c;
+        unmapped++;
+        var w=(d.crime_action||'other').split(' ');
+        return w[0].charAt(0).toUpperCase()+w[0].slice(1)+' (unclassified)';
+      }
+      cash.forEach(function(x){
+        var d=x.data||{}, b=bucket(nameFor(d));
+        b.runs++; b.nerve+=d.nerve||0; b.money+=d.money_gained||0;
+      });
+      itemRows.forEach(function(x){
+        var d=x.data||{}, b=bucket(nameFor(d));
+        b.runs++; b.nerve+=d.nerve||0;
+        var it=d.item;
+        if(it && typeof it==='object'){
+          Object.keys(it).forEach(function(id){
+            b.goods+=(it[id]||0)*((ITEMS[id]||{}).market_value||0);
+          });
+        } else if(it!=null){
+          b.goods+=((ITEMS[String(it)]||{}).market_value||0);
+        }
+      });
+      ptRows.forEach(function(x){
+        var d=x.data||{}, b=bucket(nameFor(d));
+        b.runs++; b.nerve+=d.nerve||0; b.points+=d.points||0;
+      });
+
+      var names=Object.keys(agg);
+      var totalV=0, totalN=0, totalR=0;
+      names.forEach(function(n){ totalV+=agg[n].money+agg[n].goods; totalN+=agg[n].nerve; totalR+=agg[n].runs; });
+      names.sort(function(a,b){ return (agg[b].money+agg[b].goods)-(agg[a].money+agg[a].goods) });
+
+      tiles($('crimetiers'),[
+        ['Total crime earnings',abbr(totalV),num(totalR)+' successes','cash'],
+        ['Nerve spent',num(totalN),'Across all logged crimes',''],
+        ['Average return',fmt(totalN?totalV/totalN:0),'Per point of nerve','']
+      ]);
+
+      var box=$('crimerows'); box.textContent='';
+      var max=names.length?(agg[names[0]].money+agg[names[0]].goods):1;
+      names.forEach(function(n){
+        var a=agg[n], v=a.money+a.goods;
+        var per=a.nerve?v/a.nerve:0;
+        var mix=a.goods>0&&a.money>0
+          ? num(a.runs)+' runs · '+Math.round(a.goods/v*100)+'% in goods'
+          : num(a.runs)+' runs'+(a.goods>0?' · all goods':(a.money>0?' · all cash':''));
+        box.appendChild(rowEl(n,fmt(v),fmt(per)+'/nerve','',max?v/max*100:0,
+          mix+(a.points?' · '+num(a.points)+' points':'')));
+      });
+      box.appendChild(rowEl('Total',fmt(totalV),fmt(totalN?totalV/totalN:0)+'/nerve','tot',null));
+
+      var best=names.filter(function(n){return agg[n].nerve>200})
+        .sort(function(a,b){ return (agg[b].money+agg[b].goods)/agg[b].nerve-(agg[a].money+agg[a].goods)/agg[a].nerve })[0];
+      note($('crimenote'),'',
+        (best?('<b>'+best+' is your best return at '+fmt((agg[best].money+agg[best].goods)/agg[best].nerve)+
+          ' per nerve.</b> '):'')+
+        'Goods are valued at today’s market price, which matters — for most accounts the majority of crime income arrives as items, not cash.'+
+        (unmapped?(' '+num(unmapped)+' entries used an action phrase this page does not recognise; they are listed under their own verb rather than folded into a crime that might be wrong.'):''));
+      setStatus('crimest','Read '+num(totalR)+' crime successes.');
+    }).catch(function(e){
+      setStatus('crimest','Could not load crimes: '+(e&&e.message?e.message:'request failed')+'.','err');
+    }).then(function(){ $('crimeGo').disabled=false; });
+  }
+
+  function loadOC(key){
+    $('ocGo').disabled=true;
+    setStatus('ocst','Reading OC payouts…');
+    Promise.all([
+      pullLog(key,6795,function(n){ setStatus('ocst','Reading OC payouts… '+n) }),
+      pullLog(key,6793)
+    ]).then(function(r){
+      var rows=r[0].concat(r[1]);
+      var agg={}, total=0, pot=0, n=0, pctSum=0;
+      rows.forEach(function(x){
+        var d=x.data||{};
+        var share=(typeof d.balance_change==='number')?d.balance_change:(d.money||0);
+        if(!share) return;
+        var pct=typeof d.percentage==='number'?d.percentage:0;
+        var sc=d.scenario||'Unknown scenario';
+        if(!agg[sc]) agg[sc]={n:0,share:0,pot:0,pct:0,roles:{}};
+        var a=agg[sc];
+        a.n++; a.share+=share; a.pct+=pct;
+        if(pct>0){ a.pot+=share/(pct/100); pot+=share/(pct/100); }
+        if(d.role) a.roles[d.role]=(a.roles[d.role]||0)+1;
+        total+=share; n++; pctSum+=pct;
+      });
+      var names=Object.keys(agg).sort(function(a,b){return agg[b].share-agg[a].share});
+      if(!n){ setStatus('ocst','No OC payouts found in your log.','err'); return; }
+
+      tiles($('octiers'),[
+        ['Your total OC income',abbr(total),num(n)+' payouts','cash'],
+        ['Average per OC',abbr(total/n),'Your share only',''],
+        ['Your average cut',(pctSum/n).toFixed(1)+'%','Of the full pot','']
+      ]);
+
+      var box=$('ocrows'); box.textContent='';
+      var max=names.length?agg[names[0]].share:1;
+      names.forEach(function(sc){
+        var a=agg[sc];
+        var avgPct=a.n?a.pct/a.n:0;
+        box.appendChild(rowEl(sc,fmt(a.share),avgPct?avgPct.toFixed(1)+'%':'','',
+          max?a.share/max*100:0,
+          num(a.n)+'× · avg '+abbr(a.share/a.n)+' to you'+
+          (a.pot?' · pot approx '+abbr(a.pot/a.n):'')+
+          (Object.keys(a.roles).length?' · '+Object.keys(a.roles).join(', '):'')));
+      });
+      box.appendChild(rowEl('Total received',fmt(total),'','tot',null));
+
+      var bestSc=names.slice().sort(function(a,b){return (agg[b].share/agg[b].n)-(agg[a].share/agg[a].n)})[0];
+      note($('ocnote'),'','<b>'+fmt(total)+' from '+num(n)+' organised crimes, averaging '+
+        fmt(total/n)+' a run.</b> '+
+        (bestSc?('Best paying scenario for you is '+bestSc+' at '+fmt(agg[bestSc].share/agg[bestSc].n)+' a run. '):'')+
+        (pot?('Across all of them the full pots came to roughly '+fmt(pot)+', of which you took '+
+          (total/pot*100).toFixed(1)+'%. '):'')+
+        'Shares are taken from the percentage Torn records on each payout, so no assumption about team size is involved — your cut varies by role.');
+      setStatus('ocst','Read '+num(rows.length)+' payout entries.');
+    }).catch(function(e){
+      setStatus('ocst','Could not load OC payouts: '+(e&&e.message?e.message:'request failed')+'.','err');
+    }).then(function(){ $('ocGo').disabled=false; });
+  }
+
+  function loadPayouts(key){
+    $('payGo').disabled=true;
+    setStatus('payst','Fetching the item catalogue…');
+    var ITEMS={}, STOCKS={};
+    getJSON('https://api.torn.com/torn/?selections=items,stocks&key='+encodeURIComponent(key))
+    .then(function(ref){
+      ITEMS=ref.items||{}; STOCKS=ref.stocks||{};
+      setStatus('payst','Reading stock payout history…');
+      return pullLog(key,5530,function(n){ setStatus('payst','Reading item payouts… '+n) });
+    })
+    .then(function(itemRows){
+      setStatus('payst','Reading cash, point and ammo payouts…');
+      return Promise.all([Promise.resolve(itemRows),
+        pullLog(key,5531), pullLog(key,5537), pullLog(key,5533), pullLog(key,5535)]);
+    })
+    .then(function(all){
+      var itemRows=all[0], moneyRows=all[1], pointRows=all[2], ammoRows=all[3], energyRows=all[4];
+      var agg={}, totalVal=0;
+
+      itemRows.forEach(function(r){
+        var d=r.data||{}, sid=d.stock;
+        var sname=(STOCKS[sid]&&(STOCKS[sid].acronym||STOCKS[sid].name))||('#'+sid);
+        // Torn returns either {item:{id:qty}} or, on older entries, {item:<id>} meaning one unit.
+        var pairs=[];
+        if(d.item && typeof d.item==='object'){
+          Object.keys(d.item).forEach(function(id){ pairs.push([id,d.item[id]||0]) });
+        } else if(d.item!=null){
+          pairs.push([String(d.item),1]);
+        }
+        pairs.forEach(function(p){
+          var id=p[0], qty=p[1], meta=ITEMS[id]||{}, unit=meta.market_value||0;
+          if(!agg[id]) agg[id]={name:meta.name||('Item '+id),unit:unit,qty:0,val:0,stocks:{}};
+          agg[id].qty+=qty; agg[id].val+=qty*unit; totalVal+=qty*unit;
+          agg[id].stocks[sname]=1;
+        });
+      });
+
+      var money=moneyRows.reduce(function(s,r){return s+((r.data&&r.data.money)||0)},0);
+      var points=pointRows.reduce(function(s,r){return s+((r.data&&r.data.points)||0)},0);
+      var energy=energyRows.reduce(function(s,r){return s+((r.data&&r.data.energy)||0)},0);
+      var ammo=0;
+      ammoRows.forEach(function(r){
+        var a=(r.data&&r.data.ammo)||{};
+        Object.keys(a).forEach(function(t){
+          var sizes=a[t]; if(!sizes||typeof sizes!=='object') return;
+          Object.keys(sizes).forEach(function(z){ ammo+=sizes[z]||0 });
+        });
+      });
+
+      tiles($('paytiers'),[
+        ['Goods received, at market',abbr(totalVal),num(itemRows.length)+' item payouts','cash'],
+        ['Cash received',abbr(money),num(moneyRows.length)+' cash payouts',''],
+        ['Points received',num(points),num(pointRows.length)+' point payouts','']
+      ]);
+
+      var ids=Object.keys(agg).sort(function(a,b){return agg[b].val-agg[a].val});
+      var box=$('payrows'); box.textContent='';
+      var max=ids.length?agg[ids[0]].val:1;
+      ids.forEach(function(id){
+        var a=agg[id];
+        box.appendChild(rowEl(a.name,fmt(a.val),
+          num(a.qty)+' × '+abbr(a.unit),'',max?a.val/max*100:0,
+          'from '+Object.keys(a.stocks).join(', ')));
+      });
+      var tot=rowEl('Total goods value',fmt(totalVal),'','tot',null); box.appendChild(tot);
+
+      var extras=[];
+      if(energy) extras.push(num(energy)+' energy');
+      if(ammo) extras.push(num(ammo)+' rounds of ammo');
+      note($('paynote'),'','<b>'+fmt(totalVal+money)+' returned by stock benefits</b> — '+
+        fmt(totalVal)+' in goods and '+fmt(money)+' in cash'+
+        (ids.length?(', led by '+agg[ids[0]].name+' at '+fmt(agg[ids[0]].val)):'')+'. '+
+        (extras.length?('Also '+extras.join(' and ')+', not valued here. '):'')+
+        'Goods are priced at today’s market value, not what they were worth when they landed.');
+      setStatus('payst','Read '+num(itemRows.length+moneyRows.length+pointRows.length)+' payout events.');
+    })
+    .catch(function(e){
+      setStatus('payst','Could not load payouts: '+(e&&e.message?e.message:'request failed')+'.','err');
+    })
+    .then(function(){ $('payGo').disabled=false; });
+  }
+
+  // ---------- wiring ----------
+  $('f').addEventListener('submit',function(e){
+    e.preventDefault();
+    var k=$('key').value.trim();
+    if(!k){ setStatus('st','Paste a key first.','err'); return; }
+    load(k);
+  });
+  $('demo').addEventListener('click',function(){
+    $('demobar').hidden=false; render(SAMPLE); setStatus('st','');
+  });
+  $('payGo').addEventListener('click',function(){
+    var k=LASTKEY||$('key').value.trim();
+    if(!k){ setStatus('payst','Load your account above first.','err'); return; }
+    loadPayouts(k);
+  });
+  $('histGo').addEventListener('click',function(){
+    var k=LASTKEY||$('key').value.trim();
+    if(!k){ setStatus('histst','Load your account above first.','err'); return; }
+    loadHistory(k,SIGNUP);
+  });
+  $('crimeGo').addEventListener('click',function(){
+    var k=LASTKEY||$('key').value.trim();
+    if(!k){ setStatus('crimest','Load your account above first.','err'); return; }
+    loadCrimes(k);
+  });
+  $('ocGo').addEventListener('click',function(){
+    var k=LASTKEY||$('key').value.trim();
+    if(!k){ setStatus('ocst','Load your account above first.','err'); return; }
+    loadOC(k);
+  });
+
+  render(SAMPLE);
+})();
+</script>
